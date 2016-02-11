@@ -17,6 +17,7 @@ class DescriptiveStatsTask( luigi.Task ):
         descriptiveStats = {}
 
         for col in df:
+            # TODO: here
             print df[col].value_counts()
             #print df[col].describe().to_json()
             descriptiveStats[col] = df[col].describe()
