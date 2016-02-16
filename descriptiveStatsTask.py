@@ -1,6 +1,7 @@
 import luigi
 import json
 import pandas as pd
+import numpy as np
 from dataFrameTask import DataFrameTask
 
 # Compute basic statistics for every variable in the dataset
@@ -13,22 +14,31 @@ class DescriptiveStatsTask( luigi.Task ):
     def run( self ):
 
         df = pd.read_pickle( self.input().fn )
+        print df.dtypes
 
-        descriptiveStats = {}
+        stats = {}
 
         for col in df:
-            # TODO: hereeee
-            print df[col].value_counts()
-            #print df[col].describe().to_json()
-            descriptiveStats[col] = df[col].describe()
-            #print json.dumps( df[col].describe() )
+            stats[col] = df[col].describe().to_dict()
 
-        print descriptiveStats
+            if ( df[col].dtype == 'object' ):
+                # nominal values
+                if( float(stats[col]['unique']) / float(stats[col]['count']) < 0.8 ):
+                    stats[col]['value_counts'] = df[col].value_counts().to_dict()
+            else:
+                # TODO: don't throw in here the dates, only numbers
+                # numerical values (excluding NaN)
+                hist, bins = np.histogram( df[col].dropna().values )    # TODO: smart binning
+                stats[col]['histogram'] = {
+                    'hist': hist.tolist(),
+                    'bins': bins.tolist()
+                }
 
-        stats = {
-            "mean": 12.4,
-            "variance": 0.5
-        }
+            print col
+            print stats[col]
+            print ''
+
+        print json.dumps(stats)
 
         out = self.output().open('w')
         out.write( json.dumps( stats ) )

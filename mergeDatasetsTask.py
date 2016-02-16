@@ -4,4 +4,4 @@ import luigi
 class MergeDatasetsTask( luigi.Task ):
 
     def output( self ):
-        return luigi.LocalTarget( "data/fornitori.csv" )
+        return luigi.LocalTarget( "data/cordis-h2020projects.csv" )
