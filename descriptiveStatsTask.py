@@ -7,9 +7,10 @@ from dataFrameTask import DataFrameTask
 # Compute basic statistics for every variable in the dataset
 # TODO: should read from a DB
 class DescriptiveStatsTask( luigi.Task ):
+    reportID = luigi.Parameter()
 
     def requires( self ):
-        return DataFrameTask()
+        return DataFrameTask(self.reportID)
 
     def run( self ):
 
@@ -45,4 +46,4 @@ class DescriptiveStatsTask( luigi.Task ):
         out.close()
 
     def output( self ):
-        return luigi.LocalTarget( "data/descriptiveStats.json" )
+        return luigi.LocalTarget( "data/tmp/" + self.reportID + ".descriptiveStats.json" )
