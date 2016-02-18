@@ -7,6 +7,9 @@ class ConfigDatasetTask( luigi.Task ):
 
     def run(self):
 
+        #a = raw_input("CHECCCE DEVO FA CO STA ROBA?")
+        #print a
+
         # Variable types
         # http://docs.scipy.org/doc/numpy-1.10.1/user/basics.types.html
         # one among: 'int64', 'float64', 'uint64', 'datetime64[ns]', 'timedelta64[ns]', 'complex128', 'object', 'bool'

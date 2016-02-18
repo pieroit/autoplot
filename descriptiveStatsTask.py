@@ -24,8 +24,9 @@ class DescriptiveStatsTask( luigi.Task ):
 
             if ( df[col].dtype == 'object' ):
                 # nominal values
-                if( float(stats[col]['unique']) / float(stats[col]['count']) < 0.8 ):
-                    stats[col]['value_counts'] = df[col].value_counts().to_dict()
+                if ( float(stats[col]['unique']) / float(stats[col]['count']) ) < 0.8:
+                    valuesCount = df[col].value_counts( dropna=False ).sort_values( ascending=False )
+                    stats[col]['value_counts'] = valuesCount[:50].to_dict()  #only the most frequent
             else:
                 # TODO: don't throw in here the dates, only numbers
                 # numerical values (excluding NaN)
