@@ -40,8 +40,6 @@ class DescriptiveStatsTask( luigi.Task ):
             print stats[col]
             print ''
 
-        print json.dumps(stats)
-
         out = self.output().open('w')
         out.write( json.dumps( stats ) )
         out.close()
