@@ -25,7 +25,7 @@ class DataFrameTask( luigi.Task ):
         # Open CSV with pandas
         #df = pd.read_csv( self.input().fn, sep=";", dtype=types )
         #df = pd.read_csv( self.input().fn, sep=";", dtype=types, encoding='latin-1' )
-        df = pd.read_csv( csv, sep=config['separator'], decimal=config['decimal'], dtype=config['dtypes'] )
+        df = pd.read_csv( csv, sep=config['separator'], decimal=config['decimal'], dtype=config['dtypes'], usecols=config['usecols'] , encoding=config['encoding'])
 
         # Save as pickle
         df.to_pickle( self.output().fn )
