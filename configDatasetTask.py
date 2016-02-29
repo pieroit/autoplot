@@ -14,8 +14,9 @@ class ConfigDatasetTask( luigi.Task ):
         self.previewFile( inputFile )
 
         # TODO: checkout easygui
-        separator = raw_input("Separator: ")
-        decimal   = raw_input("Decimal: ")
+        separator = raw_input("Separator: ") or ","    # TODO .split() heuristic will do
+        decimal   = raw_input("Decimal: ") or "."
+        encoding  = raw_input("Encoding: ") or "utf-8"
 
         # parse first few lines
         csvHead = pd.read_csv( inputFile, sep=separator, decimal=decimal, nrows=100 )
@@ -28,14 +29,14 @@ class ConfigDatasetTask( luigi.Task ):
             'dtypes': {},
             'separator': separator,
             'decimal': decimal,
-            'encoding': 'utf-8'
+            'encoding': encoding
         }
         for c in csvHead:
             print csvHead[c]
             # http://docs.scipy.org/doc/numpy-1.10.1/user/basics.types.html
             print "Choose among [ object, float64, int64, datetime64[ns] ]" # TODO: deal with motherfucking dates
-            assignedType = raw_input(c + " dtype: ")
-            if assignedType != "":
+            assignedType = raw_input(c + " dtype: ") or None
+            if assignedType:
                 config['usecols'].append(c)
                 config['dtypes'][c] = assignedType
 
@@ -55,7 +56,4 @@ class ConfigDatasetTask( luigi.Task ):
             print file.readline()
         file.close()
         print('============================\n')
-
-    def previewColumn( self):
-        print 2
 
