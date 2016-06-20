@@ -14,4 +14,6 @@ class ReportTask( luigi.Task ):
         out.close()
 
     def output( self ):
-        return luigi.LocalTarget( "data/out/" + self.reportID + ".txt" )
+        fileName = self.reportID.split('/')
+        fileName = fileName[-1]
+        return luigi.LocalTarget( "data/out/" + fileName + ".txt" )

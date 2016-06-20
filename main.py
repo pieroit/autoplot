@@ -45,8 +45,7 @@ if __name__ == "__main__":
     cleanFolder('data/tmp/*')
     cleanFolder('data/out/*')
 
-    # Get latest order from wooCommerce
-    orders = getOrders()
-    print orders[0]
+    datasetName = "../../clienti/catenate/CC/Transactions.csv"
+
     # Launch pipeline
-    luigi.run( ["--local-scheduler", "--reportID", orders[0]], main_task_cls=ReportTask )
+    luigi.run( ["--local-scheduler", "--reportID", datasetName], main_task_cls=ReportTask )
