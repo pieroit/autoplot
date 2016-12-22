@@ -79,9 +79,10 @@ class DescriptiveStatsTask( luigi.Task ):
 
         # bar plot
         plt.figure() # reset matplotlib otherwise plots are overridden
-        plot = sns.barplot( y=levels, x=counts, orient='h' )
+        plot = sns.barplot( y=levels, x=counts, orient='h', color='#557799' )
         plt.subplots_adjust(left=0.3, right=0.9, top=0.9, bottom=0.1)
         escapedColName = self.escapeColumnName(col)
+        plt.title(escapedColName)
         plot.figure.savefig('data/tmp/plot_' + escapedColName + '.svg')
 
         # stats
@@ -96,6 +97,7 @@ class DescriptiveStatsTask( luigi.Task ):
         plt.figure() # reset matplotlib otherwise plots are overridden
         plot = sns.distplot( notNaNValues, kde=False )
         escapedColName = self.escapeColumnName(col)
+        plt.title(escapedColName)
         plot.figure.savefig('data/tmp/plot_' + escapedColName + '.svg')
 
         # histogram for stast
@@ -119,19 +121,30 @@ class DescriptiveStatsTask( luigi.Task ):
         if( xType == 'object' and yType == 'object'):   # both nominal
             # grouped bar chart
             plot = sns.countplot( x=x, hue=y, data=self.df )
+            plt.subplots_adjust(left=0.2, right=0.9, top=0.9, bottom=0.3)
+            plt.xticks(rotation=30)
             plot = plot.figure
 
         elif( xType == 'object' or yType == 'object' ): # one is nominal
+
+            # nominal goes on the y
+            if( yType == 'object' ):
+                tmp = x
+                x = y
+                y = tmp
+
             # box plot
-            plot = sns.boxplot( x=x, y=y, data=self.df, sym='' )        # no outliers
+            plot = sns.boxplot( x=y, y=x, data=self.df, orient='h', sym='' )        # no outliers
+            plt.subplots_adjust(left=0.4, right=0.9, top=0.9, bottom=0.3)
             plot = plot.figure
 
         else:                                           # both on scale
-            # hexbin!!!
+            # kde/hexbin!!!
             plot = sns.jointplot( x=x, y=y, data=self.df, kind='kde' )  # eventually kind='hex'
 
         # save chart as image
         escapedColName = self.escapeColumnName( x + '_vs_' + y )
+        plt.title(escapedColName)
         plot.savefig('data/tmp/plot2_' + escapedColName + '.svg')
 
 
