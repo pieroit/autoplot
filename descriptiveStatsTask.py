@@ -1,5 +1,6 @@
 import luigi
 import json
+import os
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -25,6 +26,12 @@ class DescriptiveStatsTask( luigi.Task ):
         configFilename = self.input()['config'].fn
         config = json.load( open(configFilename, 'r') )
         dependentVariables = config['dependentVariables']
+
+        # output image format
+        self.saveFigFormat = config['saveFigFormat']
+
+        # prepare folders in which plots will be saved
+        self.prepareOutputDirectories()
 
         # load data from pickle
         dataFrameFilename = self.input()['data'].fn
@@ -83,7 +90,7 @@ class DescriptiveStatsTask( luigi.Task ):
         plt.subplots_adjust(left=0.3, right=0.9, top=0.9, bottom=0.1)
         escapedColName = self.escapeColumnName(col)
         plt.title(escapedColName)
-        plot.figure.savefig('data/tmp/plot_' + escapedColName + '.svg')
+        plot.figure.savefig(self.distributionsDir + escapedColName + '.' + self.saveFigFormat)
 
         # stats
         self.stats[col]['value_counts'] = maxValuesCount.to_dict()  #only the most frequent
@@ -98,7 +105,7 @@ class DescriptiveStatsTask( luigi.Task ):
         plot = sns.distplot( notNaNValues, kde=False )
         escapedColName = self.escapeColumnName(col)
         plt.title(escapedColName)
-        plot.figure.savefig('data/tmp/plot_' + escapedColName + '.svg')
+        plot.figure.savefig(self.distributionsDir + escapedColName + '.' + self.saveFigFormat)
 
         # histogram for stast
         hist, bins = np.histogram( notNaNValues, bins=nBins )
@@ -122,7 +129,7 @@ class DescriptiveStatsTask( luigi.Task ):
             # grouped bar chart
             plot = sns.countplot( x=x, hue=y, data=self.df )
             plt.subplots_adjust(left=0.2, right=0.9, top=0.9, bottom=0.3)
-            plt.xticks(rotation=30)
+            plt.xticks(rotation=60)
             plot = plot.figure
 
         elif( xType == 'object' or yType == 'object' ): # one is nominal
@@ -145,11 +152,21 @@ class DescriptiveStatsTask( luigi.Task ):
         # save chart as image
         escapedColName = self.escapeColumnName( x + '_vs_' + y )
         plt.title(escapedColName)
-        plot.savefig('data/tmp/plot2_' + escapedColName + '.svg')
+        plot.savefig(self.relationsDir + escapedColName + '.' + self.saveFigFormat)
 
 
     def escapeColumnName(self, name):
         return name.replace("/", "")
+
+    def prepareOutputDirectories(self):
+        # set output directories
+        self.distributionsDir = 'data/tmp/distributions/'
+        self.relationsDir     = 'data/tmp/relations/'
+
+        # ensure directories exist
+        for outD in [self.distributionsDir, self.relationsDir]:
+            if not os.path.exists(outD):
+                os.makedirs(outD)
 
     def output( self ):
 

@@ -1,6 +1,7 @@
 
 import luigi
 import os
+import shutil
 import glob
 import urllib
 from pprint import pprint
@@ -11,7 +12,10 @@ def cleanFolder(regex):
 
     files2remove = glob.glob(regex)
     for f in files2remove:
-        os.remove(f)
+        if os.path.isdir(f):
+            shutil.rmtree(f)    # remove directory
+        else:
+            os.remove(f)   # remove file
 
 
 

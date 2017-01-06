@@ -15,6 +15,7 @@ class ConfigDatasetTask( luigi.Task ):
         decimal   = raw_input("Decimal: ") or "."
         thousands = raw_input("Thousands: ") or None
         encoding  = raw_input("Encoding: ") or "utf-8"
+        saveFigFormat = raw_input("Save images in format: ") or "svg"
 
         # parse first few lines
         csvHead = pd.read_csv( inputFile, sep=separator, decimal=decimal, nrows=100 )
@@ -28,7 +29,8 @@ class ConfigDatasetTask( luigi.Task ):
             'separator': separator,
             'decimal': decimal,
             'thousands': thousands,
-            'encoding': encoding
+            'encoding': encoding,
+            'saveFigFormat': saveFigFormat
         }
         for c in csvHead:
             print csvHead[c]
