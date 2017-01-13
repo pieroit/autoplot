@@ -144,10 +144,21 @@ class DescriptiveStatsTask( luigi.Task ):
                 y_axis = tmp
 
             # box plot
-            bar_order = self.deduceBarOrder(self.df[x_axis].unique())
-            plot = sns.boxplot( x=y_axis, y=x_axis, data=self.df, orient='h', sym='', order=bar_order )        # no outliers
-            plt.subplots_adjust(left=0.4, right=0.9, top=0.9, bottom=0.3)
-            plot = plot.figure
+            #bar_order = self.deduceBarOrder(self.df[x_axis].unique())
+            #plot = sns.boxplot( x=y_axis, y=x_axis, data=self.df, orient='h', sym='', order=bar_order )        # no outliers
+            #plt.subplots_adjust(left=0.4, right=0.9, top=0.9, bottom=0.3)
+            #plot = plot.figure
+
+            # facet grid plot
+            order = self.deduceBarOrder(self.df[x_axis].unique())
+            y_axis_min      = self.df[y_axis].min()
+            y_axis_max      = self.df[y_axis].max()
+            y_axis_bin_size = (y_axis_max - y_axis_min) / 10 # 10 bins
+            bins = np.arange(y_axis_min, y_axis_max, y_axis_bin_size)
+            grid = sns.FacetGrid(self.df, col=x_axis, col_wrap=3, size=2, aspect=2, col_order=order)
+            plot = grid.map(plt.hist, y_axis, bins=bins)
+            #plt.subplots_adjust(left=0.4, right=0.9, top=0.9, bottom=0.3)
+            #plot = plot.figure
 
         else:                                           # both on scale
             # kde/hexbin!!!
@@ -155,7 +166,7 @@ class DescriptiveStatsTask( luigi.Task ):
 
         # save chart as image
         escapedColName = self.escapeColumnName( y + '_vs_' + x )
-        plt.title(escapedColName)
+        #plt.title(escapedColName)
         plot.savefig(self.relationsDir + escapedColName + '.' + self.saveFigFormat)
 
 
@@ -180,7 +191,7 @@ class DescriptiveStatsTask( luigi.Task ):
                 labels_contain_numbers = labels_contain_numbers or bool(re.search(r'\d', label))
 
         if labels_contain_numbers:
-            return natsort.natsorted(labels)
+            return natsort.natsorted(labels) # God bless the guy who wrote this library
 
         # default is: no order
         return None
