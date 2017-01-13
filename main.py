@@ -26,6 +26,7 @@ if __name__ == "__main__":
     cleanFolder('data/out/*')
 
     datasetName = "/home/piero/Desktop/clienti/GreenPeace/donors/data/experience.csv"
+    #datasetName = "/home/piero/Desktop/clienti/GreenPeace/prima_fase_beta/tabellone.csv"
 
     # Launch pipeline
     luigi.run( ["--local-scheduler", "--reportID", datasetName], main_task_cls=ReportTask )
