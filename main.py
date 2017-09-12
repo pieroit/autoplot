@@ -1,6 +1,7 @@
 
 import luigi
 import os
+import sys
 import shutil
 import glob
 import urllib
@@ -24,9 +25,8 @@ if __name__ == "__main__":
     # Remove produced file for debugging purposes
     cleanFolder('data/tmp/*')
     cleanFolder('data/out/*')
-
-    datasetName = "/home/piero/Desktop/clienti/GreenPeace/donors/data/experience.csv"
-    #datasetName = "/home/piero/Desktop/clienti/GreenPeace/prima_fase_beta/tabellone.csv"
+    
+    datasetName = sys.argv[1]
 
     # Launch pipeline
     luigi.run( ["--local-scheduler", "--reportID", datasetName], main_task_cls=ReportTask )
