@@ -1,4 +1,4 @@
-from libxml2mod import xmlTextReaderQuoteChar
+#from libxml2mod import xmlTextReaderQuoteChar
 import luigi
 import json
 import pandas as pd

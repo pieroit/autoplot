@@ -6,7 +6,6 @@ import shutil
 import glob
 import urllib
 from pprint import pprint
-from woocommerce import API
 from reportTask import ReportTask
 
 def cleanFolder(regex):
